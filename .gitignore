@@ -57,4 +57,11 @@ rsconnect/
 /*_files/
 
 # End of https://www.toptal.com/developers/gitignore/api/R
----
+
+# ignore Mac OS artifacts
+.DS_Store
+**/.DS_Store
+
+# ignore PDF and HTML outputs
+*.pdf
+*.html
