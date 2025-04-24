@@ -2,14 +2,14 @@
 
 ## Datos
 
-- Originales [data/2020-data/*csv.gz](data/2020-data/): Del año 2020 de COVID-19 de Perú. 
+- Originales [data/2020-data/*csv.gz](data/2020-data/): Del año 2020 de COVID-19 de Perú.
 - Procesados [data/*csv.gz](data/): Datos procesados para el taller.
 
 ## Proceso
 
 ### Fallecidos
 
-Referencia: [processing_scripts/processing_deaths.R](processing_scripts/processing_deaths.R)
+Referencia: [processing_scripts/proc_deaths.R](processing_scripts/proc_deaths.R)
 
 Sólo se consideró como numérico el campo `edad_declarada`, el resto se consideraron como texto. Además se eliminaron las siguientes columnas:
 
@@ -22,13 +22,13 @@ Sólo se consideró como numérico el campo `edad_declarada`, el resto se consid
 
 1. Cambio de fecha: Se muestreó 10% de los registros, y se modificó la fecha del formato "YYYY-MM-DD" a "DD-MM-YYYY" de 10% de los datos.
 2. De los datos resultantes, se removieron 5% de los `uuid` de los registros.
-3. Finalmente, a los registros con `edad_declarada` en el rango de [55, 74] años, se modificaron 6% de estos poniéndoles un `age_group` (errado) de "75+" 
+3. Finalmente, a los registros con `edad_declarada` en el rango de [55, 74] años, se modificaron 6% de estos poniéndoles un `age_group` (errado) de "75+"
 
 **Datos finales**: [data/deaths.csv.gz](data/deaths.csv.gz)
 
 ### Positivos
 
-Referencia: [processing_scripts/processing_positives.R](processing_scripts/processing_positives.R)
+Referencia: [processing_scripts/proc_positives.R](processing_scripts/proc_positives.R)
 
 Sólo se consideró como numérico el campo `edad`, el resto se consideraron como texto. Además se eliminaron las siguientes columnas:
 
@@ -48,7 +48,7 @@ Sólo se consideró como numérico el campo `edad`, el resto se consideraron com
 
 ### Hospitalizados
 
-Referencia: [processing_scripts/processing_hospital.R](processing_scripts/processing_hospital.R)
+Referencia: [processing_scripts/proc_hospital.R](processing_scripts/proc_hospital.R)
 
 
 Se consideraron como numéricos los campos de `edad` y `flag_vacuna`, como lógicos los campos: `con_oxigeno`, `con_ventilacion`, `cdc_positividad` y `cdc_fallecido_covid`, mientras que el resto se consideraron como texto. Además se eliminaron las siguientes columnas:
