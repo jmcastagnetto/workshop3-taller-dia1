@@ -24,7 +24,7 @@ Sólo se consideró como numérico el campo `edad_declarada`, el resto se consid
 2. De los datos resultantes, se removieron 5% de los `uuid` de los registros.
 3. Finalmente, a los registros con `edad_declarada` en el rango de [55, 74] años, se modificaron 6% de estos poniéndoles un `age_group` (errado) de "75+"
 
-**Datos finales**: [data/deaths.csv.gz](data/deaths.csv.gz)
+**Datos finales**: [data/fallecidos.csv.gz](data/fallecidos.csv.gz)
 
 ```mermaid
 %%{init: {'theme':'forest'}}%%
