@@ -30,10 +30,10 @@ Sólo se consideró como numérico el campo `edad_declarada`, el resto se consid
 %%{init: {'theme':'forest'}}%%
 graph TD
     A["orig/2020_data/2020-deaths.csv.gz"] --> B{{"Remover columnas: 'fecha_corte', 'ubigeo', 'missing', 'week'"}}
-    B --> C(["Cambiar formato de fecha al 10% de los registros: de 'YYYY-MM-DD'<br>a 'DD-MM-YYYY'"])
+    B --> C(["Cambiar formato de fecha al 10% de los registros de 'fecha_fallecimiento': de 'YYYY-MM-DD'<br>a 'DD-MM-YYYY'"])
     C --> D{{"Remover 5% de los valores del campo 'uuid'"}}
     D --> E(["Cambiar el 6% de los registros con edades en [55,74] años al 'age_group' de '75+'"])
-    E --> F["data/deaths.csv.gz"]
+    E --> F["data/fallecidos.csv.gz"]
 ```
 
 
@@ -51,11 +51,20 @@ Sólo se consideró como numérico el campo `edad`, el resto se consideraron com
 **Pasos para inclusión de errores**
 
 1. Para un 12% de los registros se cambió el formato de `fecha_resultado` de "YYYY-MM-DD" a "DD-MM-YYYY".
-2. De los registros resultantes, para aquellos del `departamento == "AMAZONAS"` se eliminaro el 9% de los valores de `metododx`
+2. De los registros resultantes, para aquellos del `departamento == "AMAZONAS"` se eliminaron el 9% de los valores de `metododx`
 3. Finalmente, a un 8% de los registros con `sexo == "FEMENINO"` y `edad > 65` se les removió el `departamento`
 
-
 **Datos finales**: [data/positivos.csv.gz](data/positivos.csv.gz)
+
+```mermaid
+%%{init: {'theme':'forest'}}%%
+graph TD
+    A["orig/2020_data/2020-positives.csv.gz"] --> B{{"Remover columnas: 'fecha_corte', 'ubigeo', 'missing', 'week'"}}
+    B --> C(["Cambiar formato de fecha al 12% de los registros de 'fecha_resultado': de 'YYYY-MM-DD'<br>a 'DD-MM-YYYY'"])
+    C --> D{{"Remover 9% de los valores del campo 'metododx' para el departamento de 'AMAZONAS'"}}
+    D --> E{{"Remover el valor de 'departamento' para el 8% de los registros con sexo 'FEMENINO' y edad > 65 años}}
+    E --> F["data/positivos.csv.gz"]
+```
 
 ### Hospitalizados
 
