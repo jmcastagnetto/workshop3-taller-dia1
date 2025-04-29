@@ -91,9 +91,9 @@ Se consideraron como numéricos los campos de `edad` y `flag_vacuna`, como lógi
 ```mermaid
 %%{init: {'theme':'forest'}}%%
 graph TD
-    A["orig/2020_data/2020-hospital.csv.gz"] --> B{{"Remover columnas: 'eess_renaes', 'eess_diresa', 'eess_red', 'flag_uci', 'ubigeo_inei_domicilio', 'missing'}}
+    A["orig/2020_data/2020-hospital.csv.gz"] --> B{{"Remover columnas: 'eess_renaes', 'eess_diresa', 'eess_red', 'flag_uci', 'ubigeo_inei_domicilio', 'missing'"}}
     B --> C(["Cambiar formato de fecha de los registros de 'fecha_dosis_1' y 'fecha_dosis_3': de 'YYYY-MM-DD'<br>a 'DD-MM-YYYY'"])
-    C --> D{{"Remover 10% de los valores del campo 'eess_nombre'}}
+    C --> D{{"Remover 10% de los valores del campo 'eess_nombre'"}}
     D --> E{{"Remover el valor de 'prov_domicilio' para el 2% de los registros del departamento de 'LIMA' y distrito de 'SAN JUAN DE LURIGANCHO'"}}
     E --> F["data/hospitalizados.csv.gz"]
 ```
