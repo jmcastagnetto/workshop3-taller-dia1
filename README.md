@@ -9,7 +9,7 @@
 
 ### Fallecidos
 
-Referencia: [processing_scripts/proc_deaths.R](processing_scripts/proc_deaths.R)
+Referencia: [processing_scripts/processing_deaths.R](processing_scripts/processing_deaths.R)
 
 Sólo se consideró como numérico el campo `edad_declarada`, el resto se consideraron como texto. Además se eliminaron las siguientes columnas:
 
@@ -26,9 +26,20 @@ Sólo se consideró como numérico el campo `edad_declarada`, el resto se consid
 
 **Datos finales**: [data/deaths.csv.gz](data/deaths.csv.gz)
 
+```mermaid
+%%{init: {'theme':'forest'}}%%
+graph TD
+    A["orig/2020_data/2020-deaths.csv.gz"] --> B{{"Remover columnas: 'fecha_corte', 'ubigeo', 'missing', 'week'"}}
+    B --> C(["Cambiar formato de fecha al 10% de los registros: de 'YYYY-MM-DD'<br>a 'DD-MM-YYYY'"])
+    C --> D{{"Remover 5% de los valores del campo 'uuid'"}}
+    D --> E(["Cambiar el 6% de los registros con edades en [55,74] años al 'age_group' de '75+'"])
+    E --> F["data/deaths.csv.gz"]
+```
+
+
 ### Positivos
 
-Referencia: [processing_scripts/proc_positives.R](processing_scripts/proc_positives.R)
+Referencia: [processing_scripts/processing_positives.R](processing_scripts/processing_positives.R)
 
 Sólo se consideró como numérico el campo `edad`, el resto se consideraron como texto. Además se eliminaron las siguientes columnas:
 
@@ -48,7 +59,7 @@ Sólo se consideró como numérico el campo `edad`, el resto se consideraron com
 
 ### Hospitalizados
 
-Referencia: [processing_scripts/proc_hospital.R](processing_scripts/proc_hospital.R)
+Referencia: [processing_scripts/processing_hospital.R](processing_scripts/processing_hospital.R)
 
 
 Se consideraron como numéricos los campos de `edad` y `flag_vacuna`, como lógicos los campos: `con_oxigeno`, `con_ventilacion`, `cdc_positividad` y `cdc_fallecido_covid`, mientras que el resto se consideraron como texto. Además se eliminaron las siguientes columnas:
