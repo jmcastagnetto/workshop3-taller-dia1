@@ -11,7 +11,7 @@ positives_2020 <- read_csv(
     edad = col_integer(),
     sexo = col_character(),
     fecha_resultado = col_character(),
-    ubigeo = col_skip(),  # remove column
+    ubigeo = col_character(),  # we will remove this later
     id_persona = col_character(),
     missing = col_skip(), # remove column
     week = col_skip() # remove column
@@ -44,7 +44,6 @@ positives_2020 <- positives_2020 %>%
 
 
 # create missing metododx for the Department of AMAZONAS
-
 tmp <- positives_2020 %>% 
   filter(departamento == "AMAZONAS") %>%
   slice_sample(prop = 0.09) %>% 
@@ -64,13 +63,12 @@ positives_2020 <- positives_2020 %>%
   ) %>%
   select(-metododx_new)
 
-# create missing departamento for sexo == FEMENINO & edad > 65
-
+# create missing departamento for 8% of sexo == FEMENINO & edad > 65
 tmp <- positives_2020 %>% 
   filter(sexo == "FEMENINO" & edad > 65) %>%
   slice_sample(prop = 0.08) %>% 
   mutate(
-    departamento = NA
+    departamento = "**remove**"
   ) %>% 
   select(rowname, departamento_new = departamento)
 
@@ -80,14 +78,26 @@ positives_2020 <- positives_2020 %>%
     departamento = if_else(
       is.na(departamento_new), 
       departamento, 
-      departamento_new
+      NA
     )
   ) %>% 
   select(-departamento_new)
 
+# replace departamento, provincia, distrito using ubigeo
+positives_2020 <- positives_2020 %>% 
+  mutate(
+    departamento = if_else(
+      is.na(departamento),
+      NA,
+      str_sub(ubigeo, 1, 2)
+    ),
+    provincia = str_sub(ubigeo, 3, 4),
+    distrito = str_sub(ubigeo, 5, 6)
+  ) %>% 
+  select(-ubigeo, -rowname)
+
 write_csv(
-  positives_2020 %>% 
-    select(-rowname),
+  positives_2020,
   "data/positivos.csv.gz",
   quote = "all"
 )

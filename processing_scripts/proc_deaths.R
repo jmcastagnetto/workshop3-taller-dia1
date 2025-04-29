@@ -1,7 +1,6 @@
 library(tidyverse)
 
 # deaths
-
 deaths_2020 <- read_csv(
   "data/2020-data/2020-deaths.csv.gz",
   col_types = cols(
@@ -13,7 +12,7 @@ deaths_2020 <- read_csv(
     departamento = col_character(),
     provincia = col_character(),
     distrito = col_character(),
-    ubigeo = col_skip(), # remove column
+    ubigeo = col_character(), # we will remove this later
     uuid = col_character(),
     age_group = col_character(),
     missing = col_skip(), # remove column
@@ -46,7 +45,6 @@ deaths_2020 <- deaths_2020 %>%
   select(-fecha_fallecimiento_new)
 
 # create missing in uuid
-
 tmp <- deaths_2020 %>% 
   slice_sample(prop = 0.05) %>% 
   mutate(
@@ -85,9 +83,17 @@ deaths_2020 <- deaths_2020 %>%
   ) %>% 
   select(-age_group_new)
 
+# Replace departamento, provincia, distrito usando ubigeo
+deaths_2020 <- deaths_2020 %>% 
+  mutate(
+    departamento = str_sub(ubigeo, 1, 2),
+    provincia = str_sub(ubigeo, 3, 4),
+    distrito = str_sub(ubigeo, 5, 6)
+  ) %>% 
+  select(-ubigeo, -rowname)
+
 write_csv(
-  deaths_2020 %>% 
-    select(-rowname),
+  deaths_2020,
   "data/fallecidos.csv.gz",
   quote = "all"
 )

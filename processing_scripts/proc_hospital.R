@@ -29,7 +29,7 @@ hospital_2020 <- read_csv(
     cdc_positividad = col_logical(),
     cdc_fecha_fallecido_covid = col_character(),
     cdc_fallecido_covid = col_logical(),
-    ubigeo_inei_domicilio = col_skip(), # remove column
+    ubigeo_inei_domicilio = col_character(), # we will remove this later
     dep_domicilio = col_character(),
     prov_domicilio = col_character(),
     dist_domicilio = col_character(),
@@ -42,7 +42,6 @@ set.seed(13579)
 
 # change the date format for `fecha_dosis1` y `fecha_dosis_3` 
 # from  YYYY-MM-DD to DD-MM-YYYY
-
 hospital_2020 <- hospital_2020 %>% 
   mutate(
     fecha_dosis1 = ymd(fecha_dosis1) %>% 
@@ -55,7 +54,7 @@ hospital_2020 <- hospital_2020 %>%
 tmp <- hospital_2020 %>% 
   slice_sample(prop = 0.12) %>% 
   mutate(
-    eess_nombre = NA
+    eess_nombre = "**remove**"
   ) %>% 
   select(rowname, eess_nombre_new = eess_nombre)
 
@@ -65,20 +64,19 @@ hospital_2020 <- hospital_2020 %>%
     eess_nombre = if_else(
       is.na(eess_nombre_new), 
       eess_nombre, 
-      eess_nombre_new
+      NA
     )
   ) %>% 
   select(-eess_nombre_new)
 
 # remove 2% of `prov_domicilio` for `dep_domicilio == "LIMA"` 
 # and `dist_domicilio == "SAN JUAN DE LURIGANCHO"`
-
 tmp <- hospital_2020 %>% 
   filter(dep_domicilio == "LIMA" & 
            dist_domicilio == "SAN JUAN DE LURIGANCHO") %>%
   slice_sample(prop = 0.02) %>% 
   mutate(
-    prov_domicilio = NA
+    prov_domicilio = "**remove**"
   ) %>% 
   select(rowname, prov_domicilio_new = prov_domicilio)
 
@@ -87,15 +85,28 @@ hospital_2020 <- hospital_2020 %>%
   mutate(
     prov_domicilio = if_else(
       is.na(prov_domicilio_new), 
-      prov_domicilio, 
-      prov_domicilio_new
+      prov_domicilio,
+      NA
     )
   ) %>%
   select(-prov_domicilio_new)
 
+# replace dep_domicilio, prov_domicilio, dist_domicilio 
+# using ubigeo_inei_domicilio
+hospital_2020 <- hospital_2020 %>% 
+  mutate(
+    dep_domicilio = str_sub(ubigeo_inei_domicilio, 1, 2),
+    prov_domicilio = if_else(
+      is.na(prov_domicilio),
+      NA,
+      str_sub(ubigeo_inei_domicilio, 3, 4)
+    ),
+    dist_domicilio = str_sub(ubigeo_inei_domicilio, 5, 6)
+  ) %>% 
+  select(-ubigeo_inei_domicilio, -rowname)
+
 write_csv(
-  hospital_2020 %>% 
-    select(-rowname),
+  hospital_2020,
   "data/hospitalizados.csv.gz",
   quote = "all"
 )
