@@ -1,0 +1,7 @@
+%%{init: {'theme':'forest'}}%%
+graph TD
+    A["orig/2020_data/2020-positives.csv.gz"] --> B{{"Remover columnas: 'fecha_corte', 'ubigeo', 'missing', 'week'"}}
+    B --> C(["Cambiar formato de fecha al 12% de los registros de 'fecha_resultado': de 'YYYY-MM-DD'<br>a 'DD-MM-YYYY'"])
+    C --> D{{"Remover 9% de los valores del campo 'metododx' para el departamento de 'AMAZONAS'"}}
+    D --> E{{"Remover el valor de 'departamento' para el 8% de los registros con sexo 'FEMENINO' y edad > 65 años"}}
+    E --> F["data/positivos.csv.gz"]
