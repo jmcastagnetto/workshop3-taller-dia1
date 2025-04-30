@@ -63,5 +63,5 @@ rsconnect/
 **/.DS_Store
 
 # ignore PDF and HTML outputs
-*.pdf
+#*.pdf
 *.html
