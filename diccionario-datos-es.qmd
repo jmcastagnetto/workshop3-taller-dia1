@@ -76,6 +76,6 @@ format:
 | **cdc_positividad** | Indica si el paciente fue positivo para COVID-19 según CDC Peru (TRUE, FALSE) |
 | **cdc_fecha_fallecido_covid** | Fecha de fallecimiento por COVID-19 según CDC Peru (YYYY-MM-DD) |
 | **cdc_fallecido_covid** | Indica si el paciente falleció por COVID-19 según CDC Peru (TRUE, FALSE) |
-| **dep_domicilio** | Departamento de domicilio |
-| **prov_domicilio** | Provincia de domicilio |
-| **dist_domicilio** | Distrito de domicilio |
+| **dep_domicilio** | Departamento de residencia |
+| **prov_domicilio** | Provincia de residencia |
+| **dist_domicilio** | Distrito de residencia |

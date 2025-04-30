@@ -1,0 +1,81 @@
+---
+title: "Dicionários de dados"
+subtitle: "Avaliando as métricas de desempenho de um sistema de vigilância"
+date: last-modified
+date-format: long
+lang: pt
+format:
+   pdf:
+     pdf-engine: xelatex
+     template: templates/eisvogel.latex
+     papersize: a4
+     toc: true
+     number-sections: true
+     toc-title: Contente
+     titlepage: true
+     toc-own-page: true
+     footnotes-pretty: true
+     header-right: "IDASH SAM"
+---
+
+## Dados: `fallecidos.csv`
+
+| Campo | Descrição |
+|:----- |:--------- |
+| **fecha_fallecimiento** | Data do falecimento (YYYY-MM-DD) |
+| **edad_declarada** | Idade declarada (em anos) |
+| **sexo** | Sexo (FEMENINO, MASCULINO) |
+| **clasificacion_def** | Classificação do óbito (Critérios: clínico, investigação epidemiológica, vínculo epidemiológico, radiológico, serológico, virológico, SINADEF) |
+| **departamento** | Departamento de residência |
+| **provincia** | Província de residência |
+| **distrito** | Distrito de residência |
+| **uuid** | ID da pessoa (gerado) |
+| **age_group** | Faixa etária (0-11, 12,24, 25-54, 55,74, 75+) |
+
+
+\newpage
+
+## Dados: `positivos.csv`
+
+| Campo | Descrição |
+|:----- |:--------- |
+| **departamento** | Departamento de residência |
+| **provincia** | Província de residência |
+| **distrito** | Distrito de residência |
+| **metododx** | Método de diagnóstico (Reação em Cadeia da Polimerase: PCR, Antigénio: AG, Teste Sorológico/Rápido: PR) |
+| **edad** | Idade (em anos) |
+| **sexo** | Sexo (FEMENINO, MASCULINO) |
+| **fecha_resultado** | Data do resultado (YYYY-MM-DD) |
+| **id_persona** | ID da pessoa (gerado) |
+
+\newpage
+
+## Datos: `hospitalizados.csv`
+
+| Campo | Descrição |
+|:----- |:--------- |
+| **eess_nombre** | Nome da instituição de saúde |
+| **id_persona** | ID da pessoa (gerado) |
+| **edad** | Idade (em anos) |
+| **sexo** | Sexo (F, M) |
+| **fecha_ingreso_hosp** | Data de admissão no hospital (YYYY-MM-DD) |
+| **fecha_ingreso_uci** | Data de admissão na UCI (YYYY-MM-DD) |
+| **fecha_ingreso_ucin** | Data de admissão na UCI neonatal (YYYY-MM-DD) |
+| **con_oxigeno** | Indica se o doente necessitou de oxigénio (TRUE, FALSE) |
+| **con_ventilacion** | Indica se o doente necessitou de ventilação (TRUE, FALSE) |
+| **fecha_segumiento_hosp_ultimo** | Data do último seguimento hospitalar (YYYY-MM-DD) |
+| **evolucion_hosp_ultimo** | Evolução do último seguimento hospitalar (alta, alta voluntária, óbito, desfavorável, estacionário, favorável, referenciado) |
+| **flag_vacuna** | Número de vacinas contra a COVID-19 que o doente recebeu |
+| **fecha_dosis1** | Data da primeira dose da vacina (YYYY-MM-DD) |
+| **fabricante_dosis1** | Fabricante da primeira dose da vacina (ASTRAZENECA, PFIZER, SINOPHARM) |
+| **fecha_dosis2** | Data da segunda dose da vacina (YYYY-MM-DD) |
+| **fabricante_dosis2** | Fabricante da segunda dose da vacina (ASTRAZENECA, PFIZER, SINOPHARM) |
+| **fecha_dosis3** | Data da terceira dose da vacina (YYYY-MM-DD) |
+| **fabricante_dosis3** | Fabricante da tercerira dose da vacina (ASTRAZENECA, PFIZER, SINOPHARM) |
+| **cdc_positividad** | Indica se o doente teve um resultado positivo para COVID-19 de acordo com o CDC Peru (TRUE, FALSE) |
+| **cdc_fecha_fallecido_covid** | Data da morte por COVID-19 segundo o CDC Peru (YYYY-MM-DD) |
+| **cdc_fallecido_covid** | Indica se o doente morreu de COVID-19 de acordo com o CDC Peru (TRUE, FALSE) |
+| **dep_domicilio** | Departamento de residência |
+| **prov_domicilio** | Província de residência |
+| **dist_domicilio** | Distrito de residência |
+
