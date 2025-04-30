@@ -41,12 +41,12 @@ format:
 |:----- |:----------- |
 | **departamento** | Departamento de residencia |
 | **provincia** | Provincia de residencia |
-| **distrito** | Distrito de residencia |      
+| **distrito** | Distrito de residencia |
 | **metododx** | Método de diagnóstico (Polimerase Chain Reaction: PCR, Antígeno: AG, Serológico/Prueba Rápida: PR) |
 | **edad** | Edad (en años) |
-| **sexo** | Sexo (FEMENINO, MASCULINO) |         
+| **sexo** | Sexo (FEMENINO, MASCULINO) |
 | **fecha_resultado** | Fecha del resultado (YYYY-MM-DD) |
-| **id_persona** | Identificador de la persona (generado) |    
+| **id_persona** | Identificador de la persona (generado) |
 
 
 \newpage
