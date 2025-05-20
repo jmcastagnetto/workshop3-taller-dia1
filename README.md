@@ -2,8 +2,9 @@
 
 ## Datos
 
-- Originales [data/2020-data/*csv.gz](data/2020-data/): Del año 2020 de COVID-19 de Perú.
-- Procesados [data/*csv.gz](data/): Datos procesados para el taller.
+- Originales: datos abiertos del COVID-19 de Perú para el año 2020, de la colección de datos en: [Plataforma Nacional de Datos Abiertos - COVID-19](https://www.datosabiertos.gob.pe/search/field_topic/covid-19-917?sort_by=changed).
+  - Los datos referenciados en la ruta "orig/2020-data/*" en el resto de este documento, se pueden encontrar en la rama (branch): `pre-workshop-devel` de este repositorio.
+- Procesados [data/*csv.gz](data/): Datos procesados para el uso en el taller.
 
 ## Proceso
 
