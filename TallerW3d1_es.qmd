@@ -15,8 +15,14 @@ format:
     lof: true
     documentclass: scrreprt
     fig-pos: "H"
-  
-crossref: 
+  html:
+    embed-resources: true
+    toc: true
+    toc-title: "Tabla de Contenidos"
+    number-sections: true
+    number-depth: 3
+
+crossref:
   lot-title: "Lista de Tablas"
   lof-title: "Lista de Figuras"
   tbl-title: Tabla
@@ -25,7 +31,8 @@ execute:
   echo: true
   warning: false
   error: false
-  
+
+lang: es
 ---
 
 ```{r}
@@ -44,14 +51,15 @@ pacman::p_load(tidyverse,
 
 Los datos se encuentran almacenados en 3 archivos comprimidos y están disponibles en el repositorio indicado:
 
-- Fallecidos
+- Fallecidos (data/fallecidos.csv.gz)
 
-- Hospitalizados
+- Hospitalizados (data/hospitalizados.csv.gz)
 
-- Positivos
+- Positivos (data/positivos.csv.gz)
 
+En el mismo repositorio se encuentra el diccionario de datos, en el archivo `diccionario-datos-es.pdf`
 
-Para el tratamiento de datos se usarán las librerías tidyverse, dlookr, inspectdf,skimr, lubridate,janitor,kableExtra
+Para el tratamiento de datos se usarán las librerías `tidyverse`, `dlookr`, `inspectdf`, `skimr`, `lubridate`, `janitor`, `kableExtra`
 
 ## Lectura de Datos
 
@@ -154,7 +162,7 @@ show_plot(var_cat)+
 
 ```{r}
 diagnose(hospitalizados)
-tbdhosp<- diagnose(hospitalizados)
+tbdhosp <- diagnose(hospitalizados)
 ```
 
 ```{r}
@@ -170,7 +178,7 @@ Las variables catergóricas del conjunto de datos hospitalizados se muestra en e
 #| label: fig-hospitalizadoscat
 #| fig-cap: Categorías de la variables tipo factor
 var_cat_h <- inspect_cat(hospitalizados[, -c(2,5,6,7,10,15,13,17,20)])
-show_plot(var_cat_h)+
+show_plot(var_cat_h) +
     labs(
     title = "Distribución de las categorías de las variables",
     subtitle = "Conjuntos de datos hospitalizados",
@@ -182,31 +190,36 @@ show_plot(var_cat_h)+
 Ahora, analizamos la variabilidad de los registros de la variables tipo fechas  que existen en el conjunto de datos.
 
 ```{r}
-fecha_ingreso_hosp_var <- tabyl(hospitalizados$fecha_ingreso_hosp, show_missing_levels = TRUE)
+fecha_ingreso_hosp_var <- tabyl(hospitalizados$fecha_ingreso_hosp,
+                                show_missing_levels = TRUE)
 
 hospitalizados$fecha_ingreso_hosp <- ymd(hospitalizados$fecha_ingreso_hosp)
 ```
 
 ```{r}
-fecha_ingreso_uci_var <- tabyl(hospitalizados$fecha_ingreso_uci, show_missing_levels = TRUE)
+fecha_ingreso_uci_var <- tabyl(hospitalizados$fecha_ingreso_uci,
+                               show_missing_levels = TRUE)
 
 hospitalizados$fecha_ingreso_uci <- ymd(hospitalizados$fecha_ingreso_uci)
 ```
 
 ```{r}
-fecha_ingreso_ucin_var <- tabyl(hospitalizados$fecha_ingreso_ucin, show_missing_levels = TRUE)
+fecha_ingreso_ucin_var <- tabyl(hospitalizados$fecha_ingreso_ucin,
+                                show_missing_levels = TRUE)
 
 hospitalizados$fecha_ingreso_ucin <- ymd(hospitalizados$fecha_ingreso_ucin)
 ```
 
 ```{r}
-fecha_segumiento_hosp_ultimo_var <- tabyl(hospitalizados$fecha_segumiento_hosp_ultimo, show_missing_levels = TRUE)
+fecha_segumiento_hosp_ultimo_var <- tabyl(hospitalizados$fecha_segumiento_hosp_ultimo, 
+                                          show_missing_levels = TRUE)
 
 hospitalizados$fecha_segumiento_hosp_ultimo <- ymd(hospitalizados$fecha_segumiento_hosp_ultimo)
 ```
 
 ```{r}
-fecha_dosis1_var <- tabyl(hospitalizados$fecha_dosis1, show_missing_levels = TRUE)
+fecha_dosis1_var <- tabyl(hospitalizados$fecha_dosis1, 
+                          show_missing_levels = TRUE)
 
 #hospitalizados$fecha_dosis1 <- ymd(hospitalizados$fecha_dosis1)
 ```
@@ -218,13 +231,15 @@ hospitalizados$fecha_dosis1 <- dmy(hospitalizados$fecha_dosis1)
 ```
 
 ```{r}
-fecha_dosis2_var <- tabyl(hospitalizados$fecha_dosis2, show_missing_levels = TRUE)
+fecha_dosis2_var <- tabyl(hospitalizados$fecha_dosis2, 
+                          show_missing_levels = TRUE)
 
 hospitalizados$fecha_dosis2 <- ymd(hospitalizados$fecha_dosis2)
 ```
 
 ```{r}
-fecha_dosis3_var <- tabyl(hospitalizados$fecha_dosis3, show_missing_levels = TRUE)
+fecha_dosis3_var <- tabyl(hospitalizados$fecha_dosis3,
+                          show_missing_levels = TRUE)
 
 #hospitalizados$fecha_dosis3 <- ymd(hospitalizados$fecha_dosis3)
 ```
@@ -236,7 +251,8 @@ hospitalizados$fecha_dosis3 <- dmy(hospitalizados$fecha_dosis3)
 ```
 
 ```{r}
-fecha_cdc_fallecido_covid_var <- tabyl(hospitalizados$cdc_fecha_fallecido_covid, show_missing_levels = TRUE)
+fecha_cdc_fallecido_covid_var <- tabyl(hospitalizados$cdc_fecha_fallecido_covid, 
+                                       show_missing_levels = TRUE)
 
 hospitalizados$cdc_fecha_fallecido_covid <- ymd(hospitalizados$cdc_fecha_fallecido_covid)
 ```
@@ -269,11 +285,12 @@ show_plot(var_cat_p)+
 
 ### Preparación de datos corrección de fechas
 ```{r}
-fecha_resultado_var <- tabyl(positivos$fecha_resultado, show_missing_levels = TRUE)
+fecha_resultado_var <- tabyl(positivos$fecha_resultado, 
+                             show_missing_levels = TRUE)
 
-positivos$fecha_resultado_f<- ymd(positivos$fecha_resultado)
+positivos$fecha_resultado_f <- ymd(positivos$fecha_resultado)
 
-num_na_val_fec<-sum(is.na(positivos$fecha_resultado_f))
+num_na_val_fec <- sum(is.na(positivos$fecha_resultado_f))
 ```
 
 # Calidad de datos
@@ -285,6 +302,7 @@ num_na_val_fec<-sum(is.na(positivos$fecha_resultado_f))
 La competitud es una característica de la calidad que se refiere al grado en que un conjunto de datos incluye todos los valores o atributos esperados.
 
 En la siguiente tabla se muestra el análisis de completitud de las variables en el conjunto de datos.
+
 ```{r}
 #| label: tbl-nafallecidos
 #| tbl-cap: Tabla de completitud del conjunto de datos fallecidos.
@@ -339,7 +357,9 @@ kbl(tr_na_pos, col.names = c("Variable", "Valores Perdidos", "Porcentaje(%)")) |
 ### Hospitalizados
 
 ```{r}
-dosis1_valid <- hospitalizados |> group_by(flag_vacuna, fecha_dosis1) |> count()
+dosis1_valid <- hospitalizados |>
+  group_by(flag_vacuna, fecha_dosis1) |> 
+  count()
 
 dosis1_valid
 ```
@@ -348,7 +368,8 @@ Como se puede apreciar, no existen fechas asignadas a la variable `fecha_dosis1`
 
 
 ```{r}
-dosis2_valid <- hospitalizados |> group_by(flag_vacuna, fecha_dosis2) |> 
+dosis2_valid <- hospitalizados |> 
+  group_by(flag_vacuna, fecha_dosis2) |> 
   count() 
 
 dosis2_NO_valid <- dosis2_valid |> 
@@ -362,7 +383,8 @@ Existen `r sum(dosis2_NO_valid$n)` casos en los que la variable ``r names(dosis2
 La métrica de validez de la variable `flag_vacuna` sería `r round((nrow(dosis2_NO_valid)/nrow(hospitalizados))*100, 2)`
 
 ```{r}
-dosis3_valid <- hospitalizados |> group_by(flag_vacuna, fecha_dosis3) |> 
+dosis3_valid <- hospitalizados |>
+  group_by(flag_vacuna, fecha_dosis3) |> 
   count() 
 
 dosis3_valid$flag_vacuna <- as.character(dosis3_valid$flag_vacuna)
@@ -373,10 +395,10 @@ Todos los registros de la variable `fecha_dosis3` se encuentran consistentes con
 ### Positivos 
 
 ```{r}
-validez_fecha_resultado <-  (num_na_val_fec/nrow(positivos)*100)
+validez_fecha_resultado <- (num_na_val_fec/nrow(positivos)*100)
 ```
  
- La métrica de validez para la variable fecha resultado en el conjunto de datos positivos (casos positivos) corresponde al `r round(validez_fecha_resultado,2)`% de fechas con un formato incorrecto que debe ser coregido.
+La métrica de validez para la variable `fecha_resultado` en el conjunto de datos `positivos` (casos positivos) corresponde al `r round(validez_fecha_resultado,2)`% de fechas con un formato incorrecto que debe ser corregido.
  
 
 # Conclusiones

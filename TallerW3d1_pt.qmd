@@ -15,6 +15,12 @@ format:
     lof: true
     documentclass: scrreprt
     fig-pos: "H"
+  html:
+    embed-resources: true
+    toc: true
+    toc-title: "Tabela de Conteúdo"
+    number-sections: true
+    number-depth: 3
   
 crossref: 
   lot-title: "Lista de Tabelas"
@@ -25,7 +31,8 @@ execute:
   echo: true
   warning: false
   error: false
-  
+
+lang: pt  
 ---
 
 ```{r}
@@ -44,14 +51,15 @@ pacman::p_load(tidyverse,
 
 Os dados são armazenados em 3 arquivos compactados e estão disponíveis no repositório indicado:
 
-- Fallecidos
+- Fallecidos (data/fallecidos.csv.gz)
 
-- Hospitalizados
+- Hospitalizados (data/hospitalizados.csv.gz)
 
-- Positivos
+- Positivos (data/positivos.csv.gz)
 
+O dicionário de dados está localizado no mesmo repositório, no arquivo `data-dictionary-pt.pdf`
 
-Para o processamento de dados, serão usados os seguintes pacotes: tidyverse, dlookr, inspectdf,skimr, lubridate,janitor,kableExtra
+Para o processamento de dados, serão usados os seguintes pacotes: `tidyverse`, `dlookr`, `inspectdf`, `skimr`, `lubridate`, `janitor`, `kableExtra`
 
 ## Leitura de dados
 
@@ -181,31 +189,36 @@ show_plot(var_cat_h)+
 Agora, analisamos a variabilidade dos registros de variáveis de data que existem no conjunto de dados.
 
 ```{r}
-fecha_ingreso_hosp_var <- tabyl(hospitalizados$fecha_ingreso_hosp, show_missing_levels = TRUE)
+fecha_ingreso_hosp_var <- tabyl(hospitalizados$fecha_ingreso_hosp,
+                                show_missing_levels = TRUE)
 
 hospitalizados$fecha_ingreso_hosp <- ymd(hospitalizados$fecha_ingreso_hosp)
 ```
 
 ```{r}
-fecha_ingreso_uci_var <- tabyl(hospitalizados$fecha_ingreso_uci, show_missing_levels = TRUE)
+fecha_ingreso_uci_var <- tabyl(hospitalizados$fecha_ingreso_uci,
+                               show_missing_levels = TRUE)
 
 hospitalizados$fecha_ingreso_uci <- ymd(hospitalizados$fecha_ingreso_uci)
 ```
 
 ```{r}
-fecha_ingreso_ucin_var <- tabyl(hospitalizados$fecha_ingreso_ucin, show_missing_levels = TRUE)
+fecha_ingreso_ucin_var <- tabyl(hospitalizados$fecha_ingreso_ucin,
+                                show_missing_levels = TRUE)
 
 hospitalizados$fecha_ingreso_ucin <- ymd(hospitalizados$fecha_ingreso_ucin)
 ```
 
 ```{r}
-fecha_segumiento_hosp_ultimo_var <- tabyl(hospitalizados$fecha_segumiento_hosp_ultimo, show_missing_levels = TRUE)
+fecha_segumiento_hosp_ultimo_var <- tabyl(hospitalizados$fecha_segumiento_hosp_ultimo, 
+                                          show_missing_levels = TRUE)
 
 hospitalizados$fecha_segumiento_hosp_ultimo <- ymd(hospitalizados$fecha_segumiento_hosp_ultimo)
 ```
 
 ```{r}
-fecha_dosis1_var <- tabyl(hospitalizados$fecha_dosis1, show_missing_levels = TRUE)
+fecha_dosis1_var <- tabyl(hospitalizados$fecha_dosis1, 
+                          show_missing_levels = TRUE)
 
 #hospitalizados$fecha_dosis1 <- ymd(hospitalizados$fecha_dosis1)
 ```
@@ -217,13 +230,15 @@ hospitalizados$fecha_dosis1 <- dmy(hospitalizados$fecha_dosis1)
 ```
 
 ```{r}
-fecha_dosis2_var <- tabyl(hospitalizados$fecha_dosis2, show_missing_levels = TRUE)
+fecha_dosis2_var <- tabyl(hospitalizados$fecha_dosis2, 
+                          show_missing_levels = TRUE)
 
 hospitalizados$fecha_dosis2 <- ymd(hospitalizados$fecha_dosis2)
 ```
 
 ```{r}
-fecha_dosis3_var <- tabyl(hospitalizados$fecha_dosis3, show_missing_levels = TRUE)
+fecha_dosis3_var <- tabyl(hospitalizados$fecha_dosis3, 
+                          show_missing_levels = TRUE)
 
 #hospitalizados$fecha_dosis3 <- ymd(hospitalizados$fecha_dosis3)
 ```
@@ -235,7 +250,8 @@ hospitalizados$fecha_dosis3 <- dmy(hospitalizados$fecha_dosis3)
 ```
 
 ```{r}
-fecha_cdc_fallecido_covid_var <- tabyl(hospitalizados$cdc_fecha_fallecido_covid, show_missing_levels = TRUE)
+fecha_cdc_fallecido_covid_var <- tabyl(hospitalizados$cdc_fecha_fallecido_covid, 
+                                       show_missing_levels = TRUE)
 
 hospitalizados$cdc_fecha_fallecido_covid <- ymd(hospitalizados$cdc_fecha_fallecido_covid)
 ```
@@ -268,7 +284,8 @@ show_plot(var_cat_p)+
 
 ### Preparação de dados e correção de datas
 ```{r}
-fecha_resultado_var <- tabyl(positivos$fecha_resultado, show_missing_levels = TRUE)
+fecha_resultado_var <- tabyl(positivos$fecha_resultado, 
+                             show_missing_levels = TRUE)
 
 positivos$fecha_resultado_f<- ymd(positivos$fecha_resultado)
 
@@ -339,7 +356,9 @@ kbl(tr_na_pos, col.names = c("Variável", "Valores ausentes", "Porcentagem(%)"))
 ### Hospitalizados
 
 ```{r}
-dosis1_valid <- hospitalizados |> group_by(flag_vacuna, fecha_dosis1) |> count()
+dosis1_valid <- hospitalizados |> 
+  group_by(flag_vacuna, fecha_dosis1) |> 
+  count()
 
 dosis1_valid
 ```
@@ -348,7 +367,8 @@ Como pode ser visto, não há datas atribuídas à variável  `fecha_dosis1` inc
 
 
 ```{r}
-dosis2_valid <- hospitalizados |> group_by(flag_vacuna, fecha_dosis2) |> 
+dosis2_valid <- hospitalizados |> 
+  group_by(flag_vacuna, fecha_dosis2) |> 
   count() 
 
 dosis2_NO_valid <- dosis2_valid |> 
@@ -362,7 +382,8 @@ Há casos `r sum(dosis2_NO_valid$n)` em que a variável``r names(dosis2_NO_valid
 A métrica de validade para a variável`flag_vacuna` seria `r round((nrow(dosis2_NO_valid)/nrow(hospitalizados))*100, 2)`
 
 ```{r}
-dosis3_valid <- hospitalizados |> group_by(flag_vacuna, fecha_dosis3) |> 
+dosis3_valid <- hospitalizados |> 
+  group_by(flag_vacuna, fecha_dosis3) |> 
   count() 
 
 dosis3_valid$flag_vacuna <- as.character(dosis3_valid$flag_vacuna)
