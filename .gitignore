@@ -64,4 +64,4 @@ rsconnect/
 
 # ignore PDF and HTML outputs
 #*.pdf
-*.html
+#*.html
