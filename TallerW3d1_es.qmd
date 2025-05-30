@@ -1,0 +1,384 @@
+---
+title: "Evaluación de Sistemas de Vigilancia: Métricas de Rendimiento"
+author: "IDASH"
+format: 
+  pdf: 
+    include-in-header: 
+      - header.tex
+    include-before-body: 
+      - before-body.tex
+    toc: true
+    toc-title: "Tabla de Contenidos"
+    number-sections: true
+    number-depth: 3
+    lot: true
+    lof: true
+    documentclass: scrreprt
+    fig-pos: "H"
+  
+crossref: 
+  lot-title: "Lista de Tablas"
+  lof-title: "Lista de Figuras"
+  tbl-title: Tabla
+  fig-title: Figura
+execute: 
+  echo: true
+  warning: false
+  error: false
+  
+---
+
+```{r}
+#| echo: false
+pacman::p_load(tidyverse, 
+               dlookr,
+               inspectdf,
+               skimr, 
+               lubridate,
+               janitor,
+               kableExtra)
+
+```
+
+# Conjunto de datos 
+
+Los datos se encuentran almacenados en 3 archivos comprimidos y están disponibles en el repositorio indicado:
+
+- Fallecidos
+
+- Hospitalizados
+
+- Positivos
+
+
+Para el tratamiento de datos se usarán las librerías tidyverse, dlookr, inspectdf,skimr, lubridate,janitor,kableExtra
+
+## Lectura de Datos
+
+
+```{r}
+#| label: fallecidos
+
+fallecidos <- read_csv("data/fallecidos.csv.gz",
+  col_types = cols(
+    fecha_fallecimiento = col_date(format = "%Y-%m-%d"),
+    edad_declarada = col_integer(),
+    sexo = col_character(),
+    clasificacion_def = col_character(),
+    departamento = col_factor(),
+    provincia = col_factor(),
+    distrito = col_factor(),
+    uuid = col_character(),
+    age_group = col_factor(),
+  )
+)
+```
+
+```{r}
+#| label: hospitalizados
+hospitalizados <- read_csv("data/hospitalizados.csv.gz",
+  col_types = cols(
+    eess_nombre = col_factor(),
+    id_persona = col_character(),
+    edad = col_integer(),
+    sexo = col_factor(),
+    fecha_ingreso_hosp = col_character(),
+    fecha_ingreso_uci = col_character(),
+    fecha_ingreso_ucin = col_character(),
+    con_oxigeno = col_logical(),
+    con_ventilacion = col_logical(),
+    fecha_segumiento_hosp_ultimo = col_character(),
+    evolucion_hosp_ultimo = col_factor(),
+    flag_vacuna = col_factor(),
+    fecha_dosis1 = col_character(),
+    fabricante_dosis1 = col_factor(),
+    fecha_dosis2 = col_character(),
+    fabricante_dosis2 = col_factor(),
+    fecha_dosis3 = col_character(),
+    fabricante_dosis3 = col_factor(),
+    cdc_positividad = col_logical(),
+    cdc_fecha_fallecido_covid = col_character(),
+    cdc_fallecido_covid = col_logical(),
+    dep_domicilio = col_factor(),
+    prov_domicilio = col_factor(),
+    dist_domicilio = col_factor(),
+  )
+)
+```
+
+```{r}
+#| label: positivos
+positivos <- read_csv(
+  "data/positivos.csv.gz",
+  col_types = cols(
+    departamento = col_factor(),
+    provincia = col_factor(),
+    distrito = col_factor(),
+    metododx = col_factor(),
+    edad = col_integer(),
+    sexo = col_factor(),
+    fecha_resultado = col_character(),
+    id_persona = col_character()
+  ))
+
+```
+
+# Análisis Exploratorio de Datos (EDA) y preparación de datos 
+
+El \ac{eda} es un proceso que consiste en investigar, visualizar y resumir las principales características y patrones de un conjunto de datos, a menudo utilizando técnicas gráficas y estadísticas descriptivas. Su objetivo principal es entender los datos en profundidad, descubrir anomalías, identificar relaciones entre variables y extraer **insights** iniciales que puedan guiar análisis posteriores más formales o la construcción de modelos.
+
+## Fallecidos
+
+```{r}
+diagnose(fallecidos)
+```
+
+```{r}
+diagnose_numeric(fallecidos)
+```
+En el conjunto de datos se identificaron 6 variables categóricas las cuales a continuación se muestra la distribución de las categorías de cada variable.
+
+```{r}
+#| label: fig-fallecidoscat
+#| fig-cap: Categorías de la variables tipo factor
+var_cat <- inspect_cat(fallecidos[, c(3:7, 9)])
+show_plot(var_cat)+
+    labs(
+    title = "Distribución de las categorías de las variables",
+    subtitle = "Conjunto de datos fallecidos",
+    x = "Categoría")
+```
+
+
+## Hospitalizados
+
+```{r}
+diagnose(hospitalizados)
+tbdhosp<- diagnose(hospitalizados)
+```
+
+```{r}
+diagnose_numeric(hospitalizados)
+```
+
+
+El número de identificación únicas es `r tbdhosp[2,5]` y el número de registros es de `r nrow(hospitalizados)`, por lo que existen pacientes que se hospitalizaron más de una vez.
+
+Las variables catergóricas del conjunto de datos hospitalizados se muestra en el siguiente gráfico.
+
+```{r}
+#| label: fig-hospitalizadoscat
+#| fig-cap: Categorías de la variables tipo factor
+var_cat_h <- inspect_cat(hospitalizados[, -c(2,5,6,7,10,15,13,17,20)])
+show_plot(var_cat_h)+
+    labs(
+    title = "Distribución de las categorías de las variables",
+    subtitle = "Conjuntos de datos hospitalizados",
+    x = "Categoría")
+```
+
+### Preparación y corrección de fechas
+
+Ahora, analizamos la variabilidad de los registros de la variables tipo fechas  que existen en el conjunto de datos.
+
+```{r}
+fecha_ingreso_hosp_var <- tabyl(hospitalizados$fecha_ingreso_hosp, show_missing_levels = TRUE)
+
+hospitalizados$fecha_ingreso_hosp <- ymd(hospitalizados$fecha_ingreso_hosp)
+```
+
+```{r}
+fecha_ingreso_uci_var <- tabyl(hospitalizados$fecha_ingreso_uci, show_missing_levels = TRUE)
+
+hospitalizados$fecha_ingreso_uci <- ymd(hospitalizados$fecha_ingreso_uci)
+```
+
+```{r}
+fecha_ingreso_ucin_var <- tabyl(hospitalizados$fecha_ingreso_ucin, show_missing_levels = TRUE)
+
+hospitalizados$fecha_ingreso_ucin <- ymd(hospitalizados$fecha_ingreso_ucin)
+```
+
+```{r}
+fecha_segumiento_hosp_ultimo_var <- tabyl(hospitalizados$fecha_segumiento_hosp_ultimo, show_missing_levels = TRUE)
+
+hospitalizados$fecha_segumiento_hosp_ultimo <- ymd(hospitalizados$fecha_segumiento_hosp_ultimo)
+```
+
+```{r}
+fecha_dosis1_var <- tabyl(hospitalizados$fecha_dosis1, show_missing_levels = TRUE)
+
+#hospitalizados$fecha_dosis1 <- ymd(hospitalizados$fecha_dosis1)
+```
+
+Cuando asignamos el formato año-mes-día (`ymd`) se confirma que las observaciones no tienen ese formato y la columna se corrompe Como apreciamos en la revisión, las fechas están en formato día-mes-año.
+
+```{r}
+hospitalizados$fecha_dosis1 <- dmy(hospitalizados$fecha_dosis1)
+```
+
+```{r}
+fecha_dosis2_var <- tabyl(hospitalizados$fecha_dosis2, show_missing_levels = TRUE)
+
+hospitalizados$fecha_dosis2 <- ymd(hospitalizados$fecha_dosis2)
+```
+
+```{r}
+fecha_dosis3_var <- tabyl(hospitalizados$fecha_dosis3, show_missing_levels = TRUE)
+
+#hospitalizados$fecha_dosis3 <- ymd(hospitalizados$fecha_dosis3)
+```
+
+Cuando asignamos el formato año-mes-día (`ymd`) se confirma que las observaciones no tienen ese formato y la columna se corrompe. Como apreciamos en la revisión, las fechas están en formato día-mes-año.
+
+```{r}
+hospitalizados$fecha_dosis3 <- dmy(hospitalizados$fecha_dosis3)
+```
+
+```{r}
+fecha_cdc_fallecido_covid_var <- tabyl(hospitalizados$cdc_fecha_fallecido_covid, show_missing_levels = TRUE)
+
+hospitalizados$cdc_fecha_fallecido_covid <- ymd(hospitalizados$cdc_fecha_fallecido_covid)
+```
+
+## Positivos
+
+```{r}
+diagnose(positivos)
+```
+
+```{r}
+diagnose_numeric(positivos)
+```
+
+El número de identificaciones únicas es de `r n_distinct(positivos$id_persona)`, por lo que existen pacientes que fueron diagnosticados como Covid positivo más de una vez.
+
+Las variables categóricas se muestran en el siguiente gráfico
+
+```{r}
+#| label: fig-positivoscat
+#| fig-cap: Categorías de la variables tipo factor
+var_cat_p <- inspect_cat(positivos[,-c(5,7,8)])
+show_plot(var_cat_p)+
+    labs(
+    title = "Distribución de las categorías de las variables",
+    subtitle = "Conjunto de datos de casos positivos de Covid-19",
+    x = "Categoría")
+```
+
+
+### Preparación de datos corrección de fechas
+```{r}
+fecha_resultado_var <- tabyl(positivos$fecha_resultado, show_missing_levels = TRUE)
+
+positivos$fecha_resultado_f<- ymd(positivos$fecha_resultado)
+
+num_na_val_fec<-sum(is.na(positivos$fecha_resultado_f))
+```
+
+# Calidad de datos
+
+## Completitud 
+
+### Fallecidos
+
+La competitud es una característica de la calidad que se refiere al grado en que un conjunto de datos incluye todos los valores o atributos esperados.
+
+En la siguiente tabla se muestra el análisis de completitud de las variables en el conjunto de datos.
+```{r}
+#| label: tbl-nafallecidos
+#| tbl-cap: Tabla de completitud del conjunto de datos fallecidos.
+na_fallecidos <- inspect_na(fallecidos)
+na_fallecidos <- na_fallecidos |> 
+  mutate(pcnt = round(pcnt, 2)) |> 
+  filter(pcnt!=0)
+
+kbl(na_fallecidos, col.names = c("Variable", "Valores Perdidos", "Porcentaje(%)")) |> 
+   kable_styling()
+
+```
+
+Los mayores porcentajes de pérdida de datos se encuentran en las variables: `fecha_fallecimiento`	y `uuid`.  
+
+
+### Hospitalizaciones
+
+```{r}
+#| label: tbl-nashospital
+#| tbl-cap: Tabla de completitud del conjunto de datos hospitalizados.
+tr_na_hosp <- inspect_na(hospitalizados[,c( "eess_nombre","edad","sexo","evolucion_hosp_ultimo","prov_domicilio")])
+
+tr_na_hosp <- tr_na_hosp |> 
+  mutate(pcnt = round(pcnt, 2)) |> 
+  filter(pcnt!=0) 
+ 
+kbl(tr_na_hosp, col.names = c("Variable", "Valores Perdidos", "Porcentaje(%)")) |> 
+   kable_styling()
+
+```
+
+### Positivos
+
+```{r}
+#| label: tbl-naspositivos
+#| tbl-cap: Tabla de completitud del conjunto de datos postivos.
+
+tr_na_pos <- inspect_na(positivos)
+
+tr_na_pos <- tr_na_pos |> 
+  mutate(pcnt = round(pcnt, 2)) |> 
+  filter(pcnt!=0) 
+ 
+kbl(tr_na_pos, col.names = c("Variable", "Valores Perdidos", "Porcentaje(%)")) |> 
+   kable_styling()
+
+```
+
+## Validez
+
+### Hospitalizados
+
+```{r}
+dosis1_valid <- hospitalizados |> group_by(flag_vacuna, fecha_dosis1) |> count()
+
+dosis1_valid
+```
+
+Como se puede apreciar, no existen fechas asignadas a la variable `fecha_dosis1` incorrectamente, considerando la variable `flag_vacuna` (valores = 0). Por tanto, no aplica el cálculo de la métrica de validez.
+
+
+```{r}
+dosis2_valid <- hospitalizados |> group_by(flag_vacuna, fecha_dosis2) |> 
+  count() 
+
+dosis2_NO_valid <- dosis2_valid |> 
+  filter(flag_vacuna == "0" & !is.na(fecha_dosis2))
+
+dosis2_NO_valid$flag_vacuna <- as.character(dosis2_NO_valid$flag_vacuna)
+```
+
+Existen `r sum(dosis2_NO_valid$n)` casos en los que la variable ``r names(dosis2_NO_valid)[1]`` registra un valor de `r dosis2_NO_valid[1, 1]`, por lo que existe un problema de validez en la variable `r dosis2_NO_valid[1, 1]`.
+
+La métrica de validez de la variable `flag_vacuna` sería `r round((nrow(dosis2_NO_valid)/nrow(hospitalizados))*100, 2)`
+
+```{r}
+dosis3_valid <- hospitalizados |> group_by(flag_vacuna, fecha_dosis3) |> 
+  count() 
+
+dosis3_valid$flag_vacuna <- as.character(dosis3_valid$flag_vacuna)
+```
+
+Todos los registros de la variable `fecha_dosis3` se encuentran consistentes considerando la información de la variable `flag_vacuna`. Por tanto, no aplica el cálculo de la métrica de validez.
+
+### Positivos 
+
+```{r}
+validez_fecha_resultado <-  (num_na_val_fec/nrow(positivos)*100)
+```
+ 
+ La métrica de validez para la variable fecha resultado en el conjunto de datos positivos (casos positivos) corresponde al `r round(validez_fecha_resultado,2)`% de fechas con un formato incorrecto que debe ser coregido.
+ 
+
+# Conclusiones
+
+En este apartado desarrolla las conclusiones de las métricas presentadas, si consideras que se puedan incluir otras métricas comenta si con los datos es suficiente o se necesitarían otras fuentes.
